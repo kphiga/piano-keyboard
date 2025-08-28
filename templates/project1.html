@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <title>ピアノ鍵盤</title>
+        <meta charset="UTF-8"/>
+        <link rel="stylesheet" href="project1.css">
+    </head>
+    <body>
+        <header class="keyboard">
+            <div class="container">
+                <div class="header-title">
+                    <h1>ピアノ鍵盤</h1>
+                </div>
+                <div class="keys">
+                    <button class="btn" data-action="Do">Do</button>
+                    <button class="btn" data-action="Re">Re</button>
+                    <button class="btn" data-action="Mi">Mi</button>
+                    <button class="btn" data-action="Fa">Fa</button>
+                    <button class="btn" data-action="So">So</button>
+                    <button class="btn" data-action="Ra">Ra</button>
+                    <button class="btn" data-action="Si">Si</button>
+
+                    <audio id="audioPlayer"></audio>
+
+                    <script>
+                    document.querySelectorAll(".btn").forEach(btn => {
+                        btn.addEventListener("click", function() {
+                            const action = this.dataset.action;
+                            fetch("/button_action", {
+                                method: "POST",
+                                headers: {"Content-Type":"application/json"},
+                                body: JSON.stringify({key:action})
+                            })
+                            .then(res => res.json())
+                            .then(data => {
+                                if(data.soundfile){
+                                    const audioPlayer=document.getElementById("audioPlayer");
+                                    audioPlayer.src=`.${data.soundfile}`;
+                                    audioPlayer.play();
+                                } else {
+                                    console.error(data.error);
+                                }
+                            })
+                        });
+                    });    
+                    </script>
+                </div>
+            </div>
+        </header>
+    </body>
+</html>
